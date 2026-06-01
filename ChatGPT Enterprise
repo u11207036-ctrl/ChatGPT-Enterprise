@@ -1,0 +1,1659 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GPT Lab - AI Learning Hub</title>
+  <style>
+    :root {
+      --bg: #f8fbfd;
+      --card: #ffffff;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --soft-line: #eef2f7;
+      --blue: #0f6fb7;
+      --blue-soft: #eff9ff;
+      --green: #0e9f6e;
+      --green-soft: #ecfdf7;
+      --yellow: #fff1a5;
+      --shadow: 0 12px 18px rgba(15, 23, 41, 0.06);
+      --radius: 12px;
+      --content: 1088px;
+      color-scheme: light;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 40;
+      width: 205px;
+      background: #fff;
+      border-right: 1px solid var(--line);
+      padding: 25px 18px 32px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 12px;
+      align-items: center;
+      margin: 0 0 34px 5px;
+    }
+
+    .mark,
+    .mini-mark {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: var(--blue);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .brand-title {
+      display: block;
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .brand-subtitle {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.2;
+    }
+
+    .nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav a {
+      display: flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 18px 0 24px;
+      border-radius: 8px;
+      color: #334155;
+      font-size: 14px;
+      font-weight: 800;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+
+    .nav a:hover {
+      transform: translateX(2px);
+      color: var(--blue);
+    }
+
+    .nav a.active {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .learning-note {
+      margin-top: auto;
+      width: 100%;
+      border: 1px solid #d3f8e9;
+      border-radius: 10px;
+      background: var(--green-soft);
+      padding: 16px;
+    }
+
+    .learning-note strong {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 14px;
+    }
+
+    .learning-note p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .page {
+      min-height: 100vh;
+      margin-left: 205px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      display: flex;
+      gap: 26px;
+      align-items: center;
+      width: min(var(--content), calc(100vw - 288px));
+      min-height: 68px;
+      margin-left: 43px;
+      background: #fff;
+      border: 1px solid var(--line);
+      transform: translateY(-3px);
+      padding: 11px 31px;
+    }
+
+    .mobile-menu {
+      display: none;
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .search {
+      position: relative;
+      flex: 1;
+    }
+
+    .search span {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      color: var(--muted);
+      transform: translateY(-50%);
+      font-size: 16px;
+      pointer-events: none;
+    }
+
+    .search input {
+      width: 100%;
+      height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--ink);
+      padding: 0 16px 0 40px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .search input:focus {
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 4px rgba(15, 111, 183, 0.1);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--ink);
+      padding: 0 20px;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(15, 23, 41, 0.08);
+    }
+
+    .btn.primary {
+      border-color: var(--ink);
+      background: var(--ink);
+      color: #fff;
+    }
+
+    .btn.compact {
+      min-height: 36px;
+      padding: 0 14px;
+      border-radius: 9px;
+      font-size: 13px;
+    }
+
+    .content {
+      width: min(var(--content), calc(100vw - 288px));
+      margin-left: 43px;
+      padding: 32px 0 72px;
+    }
+
+    section {
+      scroll-margin-top: 96px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 700px) 364px;
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 40px;
+    }
+
+    .hero-card,
+    .panel,
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      min-height: 470px;
+      padding: 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: fit-content;
+      min-height: 30px;
+      border-radius: 8px;
+      background: var(--green-soft);
+      color: var(--green);
+      padding: 0 10px;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .pill.blue {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .hero-card h1 {
+      margin: 26px 0 24px;
+      font-size: 64px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .hero-card h2 {
+      margin: 0 0 28px;
+      color: var(--blue);
+      font-size: 26px;
+      line-height: 1.3;
+    }
+
+    .hero-card p {
+      max-width: 610px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: auto;
+      padding-top: 34px;
+    }
+
+    .side-stack {
+      display: grid;
+      gap: 26px;
+    }
+
+    .info-card {
+      min-height: 222px;
+      padding: 22px;
+    }
+
+    .card-head {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .mini-mark {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .mini-mark.blue {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .card-head strong {
+      display: block;
+      font-size: 14px;
+      line-height: 1.2;
+    }
+
+    .card-head span {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.2;
+    }
+
+    .info-card h3,
+    .quick-panel h3,
+    .prompt-card h3,
+    .workflow-card h3,
+    .guide-card h3 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.3;
+    }
+
+    .info-card p,
+    .quick-panel p,
+    .prompt-card p,
+    .workflow-card p,
+    .guide-card p {
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .info-card p {
+      margin: 16px 0 0;
+      font-size: 13px;
+    }
+
+    .quick-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+      margin-bottom: 76px;
+    }
+
+    .quick-panel {
+      padding: 22px;
+      min-height: 260px;
+    }
+
+    .quick-panel p {
+      margin: 10px 0 20px;
+      font-size: 13px;
+    }
+
+    .quick-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .quick-list button {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid var(--soft-line);
+      border-radius: 9px;
+      background: #f8fafc;
+      color: var(--ink);
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.35;
+      transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    }
+
+    .quick-list button:hover {
+      border-color: #bae6fd;
+      background: #f1fbff;
+      transform: translateX(2px);
+    }
+
+    .section-heading {
+      max-width: 920px;
+      margin: 0 auto 40px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 14px;
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: 32px;
+      line-height: 1.2;
+      font-weight: 900;
+    }
+
+    .section-heading p {
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .course-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 32px 20px;
+      margin-bottom: 92px;
+    }
+
+    .course-card {
+      display: flex;
+      min-height: 340px;
+      flex-direction: column;
+      background: var(--yellow);
+      padding: 22px;
+    }
+
+    .course-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .course-card h3 {
+      margin: 30px 0 18px;
+      font-size: 19px;
+      line-height: 1.4;
+    }
+
+    .course-card p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .checks {
+      display: grid;
+      gap: 8px;
+      margin: 0 0 22px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .checks li {
+      display: grid;
+      grid-template-columns: 14px 1fr;
+      gap: 10px;
+      align-items: start;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .checks li::before {
+      content: "";
+      width: 14px;
+      height: 14px;
+      margin-top: 2px;
+      border-radius: 999px;
+      background: var(--green);
+    }
+
+    .course-card .btn {
+      margin-top: auto;
+      width: 100%;
+    }
+
+    .filter-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: -10px 0 30px;
+    }
+
+    .filter {
+      min-width: 96px;
+      min-height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      padding: 0 12px;
+      font-size: 12px;
+      font-weight: 800;
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .filter.active,
+    .filter:hover {
+      border-color: var(--blue);
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .result-line {
+      min-height: 22px;
+      margin: -18px 0 18px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .prompt-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px 20px;
+      margin-bottom: 92px;
+    }
+
+    .prompt-card {
+      min-height: 320px;
+      padding: 20px 22px 22px;
+    }
+
+    .prompt-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 2px;
+    }
+
+    .prompt-card h3 {
+      margin-top: 12px;
+      font-size: 19px;
+    }
+
+    .prompt-card > p {
+      margin: 14px 0 28px;
+      font-size: 13px;
+    }
+
+    .prompt-box {
+      min-height: 144px;
+      border: 1px solid var(--soft-line);
+      border-radius: 10px;
+      background: #f8fafc;
+      color: #334155;
+      padding: 14px 16px;
+      font-size: 12px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+      margin-bottom: 92px;
+    }
+
+    .workflow-card {
+      min-height: 420px;
+      padding: 22px;
+    }
+
+    .workflow-card .card-head {
+      margin-bottom: 12px;
+    }
+
+    .workflow-card > p {
+      margin: 0 0 28px;
+      font-size: 13px;
+    }
+
+    .steps {
+      display: grid;
+      gap: 16px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      text-align: left;
+    }
+
+    .step-number {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 800;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      line-height: 1.3;
+    }
+
+    .step span:last-child {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .step:hover .step-number,
+    .step.active .step-number {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .guide-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 92px;
+    }
+
+    .guide-card {
+      min-height: 230px;
+      padding: 20px;
+    }
+
+    .guide-card h3 {
+      margin: 22px 0 14px;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+
+    .guide-card p {
+      min-height: 48px;
+      margin: 0 0 18px;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .guide-card .btn {
+      width: 100%;
+    }
+
+    .faq-list {
+      display: grid;
+      gap: 20px;
+      max-width: 816px;
+      margin: 0 auto 44px;
+    }
+
+    .faq-item {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .faq-item summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      min-height: 72px;
+      padding: 18px 20px;
+      cursor: pointer;
+      list-style: none;
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .faq-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq-item summary::after {
+      content: "+";
+      flex: 0 0 auto;
+      color: var(--blue);
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .faq-item[open] summary::after {
+      content: "-";
+    }
+
+    .faq-item p {
+      margin: -12px 20px 18px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .footer {
+      color: var(--muted);
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 80;
+      border-radius: 10px;
+      background: var(--ink);
+      color: #fff;
+      padding: 12px 16px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.22);
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 16px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.38);
+      padding: 20px;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      width: min(640px, 100%);
+      max-height: min(760px, calc(100vh - 40px));
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 24px 80px rgba(15, 23, 42, 0.24);
+    }
+
+    .modal-head {
+      position: sticky;
+      top: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+      padding: 20px 22px;
+    }
+
+    .modal-head h2 {
+      margin: 8px 0 0;
+      font-size: 24px;
+      line-height: 1.25;
+    }
+
+    .modal-close {
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .modal-body {
+      padding: 22px;
+      color: #334155;
+    }
+
+    .modal-body p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .modal-body ul {
+      display: grid;
+      gap: 10px;
+      margin: 0 0 20px;
+      padding-left: 20px;
+    }
+
+    .modal-body li {
+      line-height: 1.6;
+    }
+
+    .empty {
+      grid-column: 1 / -1;
+      display: none;
+      border: 1px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 28px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .is-hidden {
+      display: none !important;
+    }
+
+    .flash {
+      animation: flash 1.1s ease;
+    }
+
+    @keyframes flash {
+      0%, 100% {
+        box-shadow: var(--shadow);
+      }
+      25%, 70% {
+        box-shadow: 0 0 0 4px rgba(15, 111, 183, 0.18), var(--shadow);
+      }
+    }
+
+    @media (max-width: 1180px) {
+      :root {
+        --content: calc(100vw - 48px);
+      }
+
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.2s ease;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .page {
+        margin-left: 0;
+      }
+
+      .topbar,
+      .content {
+        width: min(100% - 32px, 1088px);
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .mobile-menu {
+        display: grid;
+        place-items: center;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .side-stack {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .course-grid,
+      .workflow-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .guide-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .topbar {
+        gap: 10px;
+        padding: 11px 12px;
+      }
+
+      .topbar .btn {
+        display: none;
+      }
+
+      .content {
+        padding-top: 20px;
+      }
+
+      .hero-card {
+        min-height: 420px;
+        padding: 28px 22px;
+      }
+
+      .hero-card h1 {
+        font-size: 48px;
+      }
+
+      .hero-card h2 {
+        font-size: 22px;
+      }
+
+      .hero-card p {
+        font-size: 15px;
+      }
+
+      .quick-row,
+      .side-stack,
+      .course-grid,
+      .prompt-grid,
+      .workflow-grid,
+      .guide-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-heading {
+        margin-bottom: 28px;
+      }
+
+      .section-heading h2 {
+        font-size: 26px;
+      }
+
+      .course-card,
+      .prompt-card,
+      .workflow-card,
+      .guide-card {
+        min-height: auto;
+      }
+
+      .prompt-top {
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="#home" aria-label="GPT Lab Home">
+      <span class="mark">GPT</span>
+      <span>
+        <span class="brand-title">GPT Lab</span>
+        <span class="brand-subtitle">AI Learning Hub</span>
+      </span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a class="active" href="#home">Home</a>
+      <a href="#courses">Courses</a>
+      <a href="#prompts">Prompt Library</a>
+      <a href="#workflow">Workflow</a>
+      <a href="#guide">Quick Guide</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="learning-note">
+      <strong>學習路線</strong>
+      <p>從基礎概念開始，接著練習 Prompt、Custom GPT 與可重複的 AI 工作流。</p>
+    </div>
+  </aside>
+
+  <main class="page">
+    <header class="topbar">
+      <button class="mobile-menu" type="button" id="menuButton" aria-label="開啟選單">☰</button>
+      <label class="search" for="siteSearch">
+        <span>⌕</span>
+        <input id="siteSearch" type="search" placeholder="搜尋 Prompt / 課程">
+      </label>
+      <a class="btn primary" href="#prompts">Prompt Library</a>
+    </header>
+
+    <div class="content">
+      <section class="hero-grid" id="home">
+        <div class="hero-card">
+          <span class="pill">AI Course Companion</span>
+          <h1>GPT Lab</h1>
+          <h2>從 Prompt 到 AI 工作流的學習平台</h2>
+          <p>整合 ChatGPT Enterprise、Custom GPT、資料分析、Prompt 與 AI 工作流的學習入口。</p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#courses">開始學習</a>
+            <a class="btn" href="#prompts">查看 Prompt Library</a>
+          </div>
+        </div>
+
+        <div class="side-stack">
+          <article class="card info-card">
+            <div class="card-head">
+              <span class="mini-mark">TIP</span>
+              <span>
+                <strong>今日 AI Tip</strong>
+                <span>Prompt practice</span>
+              </span>
+            </div>
+            <h3>先給任務邊界，再要求格式</h3>
+            <p>好的 Prompt 不只說「請幫我整理」，也會補上資料來源、目標讀者、輸出格式與檢查標準。</p>
+          </article>
+
+          <article class="card info-card">
+            <div class="card-head">
+              <span class="mini-mark blue">WF</span>
+              <span>
+                <strong>Workflow 推薦</strong>
+                <span>本週練習</span>
+              </span>
+            </div>
+            <h3>會議紀錄 Workflow</h3>
+            <p>把零散筆記或逐字稿整理成可追蹤的紀錄與行動清單。</p>
+            <a class="btn compact" href="#workflow">查看流程</a>
+          </article>
+        </div>
+      </section>
+
+      <section class="quick-row" aria-label="快速入口">
+        <article class="panel quick-panel">
+          <h3>課程快速入口</h3>
+          <p>先完成核心概念，再進入實作任務。</p>
+          <div class="quick-list" id="quickCourses"></div>
+        </article>
+        <article class="panel quick-panel">
+          <h3>熱門 Prompt 卡片</h3>
+          <p>適合第一天就能開始練習的範本。</p>
+          <div class="quick-list" id="popularPrompts"></div>
+        </article>
+      </section>
+
+      <section id="courses">
+        <div class="section-heading">
+          <p class="eyebrow">Courses</p>
+          <h2>五堂課建立完整 AI 協作能力</h2>
+          <p>從 Enterprise 基礎、Custom GPT、資料分析，到 Writing 與 Research 工作流，逐步建立可落地的使用方式。</p>
+        </div>
+        <div class="course-grid" id="courseGrid"></div>
+      </section>
+
+      <section id="prompts">
+        <div class="section-heading">
+          <p class="eyebrow">Prompt Library</p>
+          <h2>可以直接複製使用的 Prompt 範本</h2>
+          <p>依照 Writing、Research、Data Analysis、Meeting 與 Workflow 分類，快速找到適合任務的 Prompt。</p>
+        </div>
+        <div class="filter-row" id="filters" aria-label="Prompt filters"></div>
+        <p class="result-line" id="resultLine"></p>
+        <div class="prompt-grid" id="promptGrid">
+          <div class="empty" id="promptEmpty">沒有符合條件的 Prompt。</div>
+        </div>
+      </section>
+
+      <section id="workflow">
+        <div class="section-heading">
+          <p class="eyebrow">Workflow</p>
+          <h2>把 AI 使用方式整理成穩定流程</h2>
+          <p>每個流程都拆成固定輸入、步驟與產出，方便重複使用與團隊共用。</p>
+        </div>
+        <div class="workflow-grid" id="workflowGrid"></div>
+      </section>
+
+      <section id="guide">
+        <div class="section-heading">
+          <p class="eyebrow">Quick Guide</p>
+          <h2>需要時立刻查得到的小工具區</h2>
+          <p>把常用判斷、Prompt 結構、AI 名詞與工作流導覽整理成好掃描的卡片。</p>
+        </div>
+        <div class="guide-grid" id="guideGrid"></div>
+      </section>
+
+      <section id="faq">
+        <div class="section-heading">
+          <p class="eyebrow">FAQ</p>
+          <h2>常見問題</h2>
+          <p>整理課程、Prompt、Research、Custom GPT 與資料分析時最常遇到的判斷。</p>
+        </div>
+        <div class="faq-list" id="faqList"></div>
+      </section>
+
+      <footer class="footer">GPT Lab - 從 Prompt 到 AI 工作流的學習平台</footer>
+    </div>
+  </main>
+
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <article class="modal">
+      <div class="modal-head">
+        <div>
+          <span class="pill blue" id="modalPill">Guide</span>
+          <h2 id="modalTitle"></h2>
+        </div>
+        <button class="modal-close" type="button" id="modalClose" aria-label="關閉">×</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </article>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const courses = [
+      {
+        id: "enterprise",
+        lesson: "第一堂",
+        icon: "CE",
+        title: "ChatGPT Enterprise 基本概念",
+        description: "建立企業版 ChatGPT 的基本使用觀念，理解模型、工作區與資安邊界。",
+        highlights: ["Enterprise 功能介紹", "GPT 模型差異", "Workspace 概念", "資安與使用觀念"],
+        detail: "這堂課聚焦在建立共同語言：你會知道 ChatGPT Enterprise 適合處理哪些任務、哪些資料需要避開，以及如何把模型能力放進日常工作流程。"
+      },
+      {
+        id: "custom-gpt",
+        lesson: "第二堂",
+        icon: "CG",
+        title: "打造與應用自訂 GPT（Custom GPT）",
+        description: "從 GPT Builder 到知識上傳，完成可分享、可管理的團隊專用助手。",
+        highlights: ["GPT Builder", "Instructions 撰寫", "Knowledge 上傳", "GPT 分享與管理"],
+        detail: "這堂課會把自訂 GPT 拆成 Instructions、Knowledge 與使用情境，讓你能設計一個可重複使用、可交接的團隊助手。"
+      },
+      {
+        id: "data-analysis",
+        lesson: "第三堂",
+        icon: "DA",
+        title: "使用 GPT 進行資料分析實戰",
+        description: "練習讓 GPT 讀懂表格資料，協助找出趨勢、KPI 與視覺化摘要。",
+        highlights: ["Excel / CSV 分析", "圖表生成", "KPI 摘要", "資料整理"],
+        detail: "這堂課會練習從資料欄位理解、異常值檢查到 KPI 摘要，讓 GPT 成為分析前期的協作工具。"
+      },
+      {
+        id: "writing",
+        lesson: "第四堂",
+        icon: "WR",
+        title: "從 Prompt 到 AI 工作流 - Writing",
+        description: "把常見寫作任務拆成可重複的流程，從 Email 到 SOP 都能更穩定產出。",
+        highlights: ["Prompt Framework", "Email Workflow", "SOP 文件生成", "會議摘要流程"],
+        detail: "這堂課會把寫作任務拆成角色、目標、上下文、格式與檢核條件，讓輸出更穩定，也更容易讓同事接手。"
+      },
+      {
+        id: "research",
+        lesson: "第五堂",
+        icon: "RS",
+        title: "選擇適合的 GPT 模式 - Research",
+        description: "學會依照研究深度、資訊來源與輸出需求，選擇適合的 GPT 模式。",
+        highlights: ["GPT 模式比較", "Research 使用情境", "模型選擇指南", "工作流推薦"],
+        detail: "這堂課會協助你判斷一般對話、資料分析、Custom GPT、Research 各自適合的任務，避免用錯工具。"
+      }
+    ];
+
+    const prompts = [
+      {
+        id: "email",
+        category: "Writing",
+        title: "商務 Email 改寫",
+        scenario: "將草稿改成清楚、專業且保留原意的商務信件。",
+        content: "請將以下 Email 草稿改寫成專業、清楚、語氣友善的版本。請保留原始重點，並提供「正式版」與「簡潔版」兩種版本：\n\n[貼上 Email 草稿]"
+      },
+      {
+        id: "research-summary",
+        category: "Research",
+        title: "研究摘要產生器",
+        scenario: "整理研究主題、不同觀點與可行建議。",
+        content: "請針對以下研究主題整理一份摘要。請包含：背景、三個主要觀點、支持與反對理由、可能風險、下一步研究問題。主題：\n\n[輸入研究主題]"
+      },
+      {
+        id: "csv-kpi",
+        category: "Data Analysis",
+        title: "CSV KPI 分析",
+        scenario: "協助分析表格資料並整理 KPI、趨勢與異常。",
+        content: "我會上傳一份 CSV / Excel。請先辨識欄位意義，再幫我整理：主要 KPI、趨勢變化、異常值、可能原因，以及三個可行建議。請用表格與條列呈現。"
+      },
+      {
+        id: "meeting-notes",
+        category: "Meeting",
+        title: "會議紀錄整理",
+        scenario: "把逐字稿或筆記轉換成可追蹤的會議紀錄。",
+        content: "請將以下會議逐字稿整理成會議紀錄。格式請包含：會議目的、重要討論、決議事項、待辦事項（負責人 / 截止日 / 狀態）、未解問題。\n\n[貼上逐字稿]"
+      },
+      {
+        id: "workflow-design",
+        category: "Workflow",
+        title: "AI 工作流設計",
+        scenario: "把重複任務拆成可以交給 AI 協作的步驟。",
+        content: "請幫我把以下工作任務設計成 AI 工作流。請輸出：任務目標、輸入資料、步驟、每一步適合的 Prompt、檢查點、最終產出格式。\n\n任務： [描述你的任務]"
+      },
+      {
+        id: "sop",
+        category: "Writing",
+        title: "SOP 文件產生器",
+        scenario: "將流程描述整理成標準作業文件。",
+        content: "請根據以下流程描述，產出一份 SOP 文件。請包含：適用情境、前置條件、操作步驟、注意事項、常見錯誤、檢核清單。\n\n[貼上流程描述]"
+      },
+      {
+        id: "mode-helper",
+        category: "Workflow",
+        title: "GPT 模式選擇助手",
+        scenario: "判斷任務應使用一般對話、資料分析、Custom GPT 或 Research。",
+        content: "請根據我的任務，推薦最適合的 GPT 使用模式。請比較一般對話、資料分析、Custom GPT、Research 四種模式，並說明推薦理由與使用步驟。\n\n任務： [輸入任務]"
+      },
+      {
+        id: "interview",
+        category: "Meeting",
+        title: "訪談重點萃取",
+        scenario: "從訪談紀錄中找出洞察、痛點與可引用內容。",
+        content: "請分析以下訪談紀錄，整理：受訪者背景、主要需求、痛點、關鍵引述、可行機會、待驗證假設。請避免過度推論。\n\n[貼上訪談內容]"
+      }
+    ];
+
+    const workflows = [
+      {
+        icon: "MT",
+        title: "會議紀錄 Workflow",
+        summary: "把零散筆記或逐字稿整理成可追蹤的紀錄與行動清單。",
+        steps: ["上傳會議逐字稿或筆記", "摘要重點", "整理待辦事項", "產出會議紀錄"]
+      },
+      {
+        icon: "RP",
+        title: "報表分析 Workflow",
+        summary: "從原始表格開始，快速得到 KPI、趨勢與報告摘要。",
+        steps: ["上傳 Excel / CSV", "清理資料", "找出 KPI 與趨勢", "產出圖表與摘要"]
+      },
+      {
+        icon: "AR",
+        title: "AI Research Workflow",
+        summary: "讓研究問題更清楚，並把多方觀點整理成可決策的摘要。",
+        steps: ["定義研究問題", "收集資料", "比較觀點", "產出研究摘要"]
+      }
+    ];
+
+    const guides = [
+      {
+        icon: "MD",
+        title: "GPT 模式選擇邏輯圖",
+        description: "用任務複雜度、資料來源與輸出形式快速選擇模式。",
+        items: ["一般對話：快速發想、草稿、改寫", "資料分析：表格、CSV、圖表與 KPI", "Custom GPT：重複任務與團隊知識", "Research：多方觀點、背景脈絡與深度摘要"]
+      },
+      {
+        icon: "PC",
+        title: "Prompt Cheat Sheet",
+        description: "快速套用角色、目標、上下文、格式與檢核條件。",
+        items: ["角色：請你扮演誰", "目標：這次要完成什麼", "上下文：資料來源、限制與讀者", "格式：表格、條列、摘要或步驟", "檢核：請自我檢查遺漏與風險"]
+      },
+      {
+        icon: "AI",
+        title: "AI 名詞小百科",
+        description: "理解模型、Token、Knowledge、Agent、Workflow 等常見詞。",
+        items: ["模型：負責理解與生成內容的核心能力", "Token：模型處理文字的基本單位", "Knowledge：提供給 Custom GPT 參考的知識檔", "Workflow：可重複執行的一組 AI 協作步驟"]
+      },
+      {
+        icon: "FQ",
+        title: "常見問題 FAQ",
+        description: "收錄課程中最常被問到的使用情境與注意事項。",
+        items: ["先確認資料是否能分享", "需要事實查證時保留來源", "把輸出格式寫清楚", "重要結論需要人工複核"]
+      },
+      {
+        icon: "WF",
+        title: "Workflow 快速導覽",
+        description: "把會議、報表、研究任務拆成穩定可重複的 AI 流程。",
+        items: ["定義輸入資料", "寫出每一步 Prompt", "設定檢查點", "保存最終輸出格式", "下一次直接複用並微調"]
+      }
+    ];
+
+    const faqs = [
+      {
+        question: "GPT Lab 適合誰使用？",
+        answer: "適合剛開始使用 ChatGPT Enterprise、需要建立 Prompt 能力，或想把日常工作整理成 AI 工作流的團隊與個人。"
+      },
+      {
+        question: "Prompt Library 可以怎麼用？",
+        answer: "你可以先依分類找到情境相近的 Prompt，再複製後替換中括號內的內容。建議每次使用後記錄效果，逐步建立自己的版本。"
+      },
+      {
+        question: "什麼時候該使用 Research？",
+        answer: "當任務需要比較多方觀點、整理背景脈絡、建立研究摘要或需要較深層的資訊分析時，可以優先考慮 Research 模式。"
+      },
+      {
+        question: "Custom GPT 和一般 ChatGPT 有什麼差別？",
+        answer: "一般 ChatGPT 適合即時對話與彈性任務；Custom GPT 則能預先設定 Instructions、知識檔案與固定流程，適合重複性高的團隊任務。"
+      },
+      {
+        question: "資料分析時需要注意什麼？",
+        answer: "先確認資料是否可分享、欄位定義是否清楚，並在產出後檢查計算邏輯、異常值與圖表解讀，避免直接把 AI 結論當成最終答案。"
+      }
+    ];
+
+    const state = {
+      category: "All",
+      query: ""
+    };
+
+    const categoryLabels = ["All", "Writing", "Research", "Data Analysis", "Meeting", "Workflow"];
+    const courseGrid = document.querySelector("#courseGrid");
+    const promptGrid = document.querySelector("#promptGrid");
+    const promptEmpty = document.querySelector("#promptEmpty");
+    const filters = document.querySelector("#filters");
+    const resultLine = document.querySelector("#resultLine");
+    const toast = document.querySelector("#toast");
+    const modalBackdrop = document.querySelector("#modalBackdrop");
+    const modalTitle = document.querySelector("#modalTitle");
+    const modalPill = document.querySelector("#modalPill");
+    const modalBody = document.querySelector("#modalBody");
+    const sidebar = document.querySelector("#sidebar");
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function normalize(value) {
+      return String(value).toLowerCase().trim();
+    }
+
+    function searchableText(item) {
+      return normalize(Object.values(item).flat().join(" "));
+    }
+
+    function renderCourses() {
+      courseGrid.innerHTML = courses.map((course) => `
+        <article class="card course-card searchable" data-search="${escapeHtml(searchableText(course))}">
+          <div class="course-top">
+            <span class="pill blue">${course.lesson}</span>
+            <span class="mini-mark">${course.icon}</span>
+          </div>
+          <h3>${course.title}</h3>
+          <p>${course.description}</p>
+          <ul class="checks">
+            ${course.highlights.map((item) => `<li>${item}</li>`).join("")}
+          </ul>
+          <button class="btn primary" type="button" data-course="${course.id}">開始學習</button>
+        </article>
+      `).join("");
+    }
+
+    function renderFilters() {
+      filters.innerHTML = categoryLabels.map((category) => `
+        <button class="filter ${category === state.category ? "active" : ""}" type="button" data-filter="${category}">
+          ${category}
+        </button>
+      `).join("");
+    }
+
+    function renderPrompts() {
+      const query = normalize(state.query);
+      let visibleCount = 0;
+
+      const cards = prompts.map((prompt) => {
+        const matchCategory = state.category === "All" || prompt.category === state.category;
+        const matchQuery = !query || searchableText(prompt).includes(query);
+        const hidden = !(matchCategory && matchQuery);
+        if (!hidden) visibleCount += 1;
+
+        return `
+          <article class="card prompt-card searchable ${hidden ? "is-hidden" : ""}" id="prompt-${prompt.id}" data-category="${prompt.category}" data-search="${escapeHtml(searchableText(prompt))}">
+            <div class="prompt-top">
+              <span class="pill">${prompt.category}</span>
+              <button class="btn compact" type="button" data-copy="${prompt.id}">複製</button>
+            </div>
+            <h3>${prompt.title}</h3>
+            <p>${prompt.scenario}</p>
+            <div class="prompt-box">${escapeHtml(prompt.content)}</div>
+          </article>
+        `;
+      }).join("");
+
+      promptGrid.innerHTML = cards + promptEmpty.outerHTML;
+      promptGrid.querySelector("#promptEmpty").style.display = visibleCount ? "none" : "block";
+      resultLine.textContent = state.query || state.category !== "All" ? `找到 ${visibleCount} 個 Prompt` : "";
+    }
+
+    function renderQuickLinks() {
+      document.querySelector("#quickCourses").innerHTML = courses.slice(0, 3).map((course) => `
+        <button type="button" data-course="${course.id}">${course.lesson}｜${course.title}</button>
+      `).join("");
+
+      document.querySelector("#popularPrompts").innerHTML = prompts.slice(0, 3).map((prompt) => `
+        <button type="button" data-jump-prompt="${prompt.id}">${prompt.title} · ${prompt.category}</button>
+      `).join("");
+    }
+
+    function renderWorkflows() {
+      document.querySelector("#workflowGrid").innerHTML = workflows.map((workflow) => `
+        <article class="card workflow-card searchable" data-search="${escapeHtml(searchableText(workflow))}">
+          <div class="card-head">
+            <span class="mini-mark">${workflow.icon}</span>
+            <span>
+              <strong>${workflow.title}</strong>
+              <span>4-step workflow</span>
+            </span>
+          </div>
+          <p>${workflow.summary}</p>
+          <div class="steps">
+            ${workflow.steps.map((step, index) => `
+              <button class="step" type="button">
+                <span class="step-number">${index + 1}</span>
+                <span>
+                  <strong>${step}</strong>
+                  <span>先確認輸入，再要求 GPT 以固定格式輸出，方便檢查與複用。</span>
+                </span>
+              </button>
+            `).join("")}
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function renderGuides() {
+      document.querySelector("#guideGrid").innerHTML = guides.map((guide, index) => `
+        <article class="card guide-card searchable" data-search="${escapeHtml(searchableText(guide))}">
+          <span class="mini-mark blue">${guide.icon}</span>
+          <h3>${guide.title}</h3>
+          <p>${guide.description}</p>
+          <button class="btn" type="button" data-guide="${index}">開啟指南</button>
+        </article>
+      `).join("");
+    }
+
+    function renderFaqs() {
+      document.querySelector("#faqList").innerHTML = faqs.map((faq, index) => `
+        <details class="faq-item searchable" ${index === 0 ? "open" : ""} data-search="${escapeHtml(searchableText(faq))}">
+          <summary>${faq.question}</summary>
+          <p>${faq.answer}</p>
+        </details>
+      `).join("");
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+
+    async function copyPrompt(id) {
+      const prompt = prompts.find((item) => item.id === id);
+      if (!prompt) return;
+      try {
+        await navigator.clipboard.writeText(prompt.content);
+      } catch {
+        const textarea = document.createElement("textarea");
+        textarea.value = prompt.content;
+        textarea.setAttribute("readonly", "");
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        textarea.remove();
+      }
+      showToast(`已複製「${prompt.title}」`);
+    }
+
+    function openCourse(id) {
+      const course = courses.find((item) => item.id === id);
+      if (!course) return;
+      modalPill.textContent = course.lesson;
+      modalTitle.textContent = course.title;
+      modalBody.innerHTML = `
+        <p>${course.detail}</p>
+        <ul>${course.highlights.map((item) => `<li>${item}</li>`).join("")}</ul>
+        <button class="btn primary" type="button" data-modal-scroll="#prompts">前往 Prompt Library</button>
+      `;
+      modalBackdrop.classList.add("show");
+    }
+
+    function openGuide(index) {
+      const guide = guides[index];
+      if (!guide) return;
+      modalPill.textContent = "Quick Guide";
+      modalTitle.textContent = guide.title;
+      modalBody.innerHTML = `
+        <p>${guide.description}</p>
+        <ul>${guide.items.map((item) => `<li>${item}</li>`).join("")}</ul>
+      `;
+      modalBackdrop.classList.add("show");
+    }
+
+    function closeModal() {
+      modalBackdrop.classList.remove("show");
+    }
+
+    function jumpToPrompt(id) {
+      state.category = "All";
+      state.query = "";
+      document.querySelector("#siteSearch").value = "";
+      renderFilters();
+      applyGlobalSearch();
+      const target = document.querySelector(`#prompt-${id}`);
+      if (!target) return;
+      target.scrollIntoView({ behavior: "smooth", block: "center" });
+      target.classList.remove("flash");
+      requestAnimationFrame(() => target.classList.add("flash"));
+    }
+
+    function applyGlobalSearch() {
+      const query = normalize(state.query);
+      document.querySelectorAll(".searchable").forEach((element) => {
+        if (element.classList.contains("prompt-card")) return;
+        const match = !query || element.dataset.search.includes(query);
+        element.classList.toggle("is-hidden", !match);
+      });
+      renderPrompts();
+    }
+
+    function updateActiveNav() {
+      const sections = ["home", "courses", "prompts", "workflow", "guide", "faq"]
+        .map((id) => document.getElementById(id))
+        .filter(Boolean);
+      const current = sections.reduce((active, section) => {
+        const rect = section.getBoundingClientRect();
+        return rect.top <= 140 ? section.id : active;
+      }, "home");
+
+      document.querySelectorAll(".nav a").forEach((link) => {
+        link.classList.toggle("active", link.getAttribute("href") === `#${current}`);
+      });
+    }
+
+    renderCourses();
+    renderFilters();
+    renderPrompts();
+    renderQuickLinks();
+    renderWorkflows();
+    renderGuides();
+    renderFaqs();
+
+    document.addEventListener("click", (event) => {
+      const copyButton = event.target.closest("[data-copy]");
+      if (copyButton) copyPrompt(copyButton.dataset.copy);
+
+      const filterButton = event.target.closest("[data-filter]");
+      if (filterButton) {
+        state.query = document.querySelector("#siteSearch").value;
+        state.category = filterButton.dataset.filter;
+        renderFilters();
+        applyGlobalSearch();
+      }
+
+      const courseButton = event.target.closest("[data-course]");
+      if (courseButton) openCourse(courseButton.dataset.course);
+
+      const guideButton = event.target.closest("[data-guide]");
+      if (guideButton) openGuide(Number(guideButton.dataset.guide));
+
+      const promptJump = event.target.closest("[data-jump-prompt]");
+      if (promptJump) jumpToPrompt(promptJump.dataset.jumpPrompt);
+
+      const modalScroll = event.target.closest("[data-modal-scroll]");
+      if (modalScroll) {
+        closeModal();
+        document.querySelector(modalScroll.dataset.modalScroll)?.scrollIntoView({ behavior: "smooth" });
+      }
+
+      if (event.target === modalBackdrop || event.target.closest("#modalClose")) closeModal();
+
+      if (event.target.closest(".nav a")) sidebar.classList.remove("open");
+
+      const step = event.target.closest(".step");
+      if (step) step.classList.toggle("active");
+    });
+
+    document.querySelector("#siteSearch").addEventListener("input", (event) => {
+      state.query = event.target.value;
+      applyGlobalSearch();
+    });
+
+    document.querySelector("#menuButton").addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeModal();
+        sidebar.classList.remove("open");
+      }
+    });
+
+    window.addEventListener("scroll", updateActiveNav, { passive: true });
+    updateActiveNav();
+  </script>
+</body>
+</html>
